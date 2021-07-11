@@ -1,19 +1,27 @@
+from validate_email import validate_email
 from django.contrib.auth import authenticate
+from django.contrib.auth.hashers import make_password
 from django.utils.translation import ugettext_lazy as _
-from models import User
+
+from api.messages import USER_ALREADY_EXISTS
+from api.models import User
 from rest_framework import serializers
 from rest_framework.authtoken.models import Token
 
 
 class UserRegistrationSerializer(serializers.ModelSerializer):
+    email = serializers.CharField(
+        validators=[validate_email], allow_blank=False, required=True
+    )
     password = serializers.CharField(write_only=True)
     confirm_password = serializers.CharField(write_only=True)
 
     class Meta:
         model = User
-        fields = ("id", "username", "email", "password", "confirm_password")
+        fields = ("id", "email", "password", "confirm_password")
 
     def create(self, validated_data):
+        validated_data["password"] = make_password(validated_data.get("password"))
         del validated_data["confirm_password"]
         return super(UserRegistrationSerializer, self).create(validated_data)
 
@@ -21,6 +29,11 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
         if attrs.get("password") != attrs.get("confirm_password"):
             raise serializers.ValidationError("Those passwords don't match.")
         return attrs
+
+    @staticmethod
+    def validate_email(email):
+        if User.objects.filter(email=email).exists():
+            raise serializers.ValidationError(detail=USER_ALREADY_EXISTS.get("message"))
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -55,13 +68,13 @@ class UserLoginSerializer(serializers.Serializer):
 # serialize data of user for common need of user table.
 class UserProfileSerializer(serializers.ModelSerializer):
     contact_no = serializers.IntegerField(required=False)
+    email = serializers.CharField(required=False)
 
     class Meta:
         model = User
         fields = (
             "email",
             "id",
-            "username",
             "created",
             "country_code",
             "contact_no",

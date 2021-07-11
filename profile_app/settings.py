@@ -40,7 +40,7 @@ INSTALLED_APPS = [
     "rest_framework.authtoken",
     "rest_framework",
     "rest_framework_swagger",
-    "apis",
+    "api",
     "corsheaders",
 ]
 
@@ -55,7 +55,9 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'profile_app.urls'
+MIDDLEWARE_CLASSES = MIDDLEWARE
+
+ROOT_URLCONF = "profile_app.urls"
 
 TEMPLATES = [
     {
@@ -73,7 +75,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'profile_app.wsgi.application'
+WSGI_APPLICATION = "profile_app.wsgi.application"
 
 
 # Database
@@ -127,19 +129,23 @@ STATIC_URL = "/static/"
 # STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 #
 # # To explicitly define the user authentication model.
-AUTH_USER_MODEL = "apis.User"
+AUTH_USER_MODEL = "api.User"
 
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.BasicAuthentication",
-        "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
     ),
     "DEFAULT_PERMISSION_CLASSES": (
         "rest_framework.permissions.AllowAny",
         "rest_framework.permissions.IsAuthenticated",
     ),
+    # Parser classes priority-wise for Swagger
+    "DEFAULT_PARSER_CLASSES": [
+        "rest_framework.parsers.FormParser",
+        "rest_framework.parsers.MultiPartParser",
+        "rest_framework.parsers.JSONParser",
+    ],
 }
 
 # Cross Origin Request Settings (CORS)
@@ -157,11 +163,3 @@ CORS_ALLOW_HEADERS = (
     "accept",
 )
 CORS_ALLOW_CREDENTIALS = False
-
-PROJECT_ROOT = os.getenv("PROJECT_ROOT")
-
-if not PROJECT_ROOT:
-    PROJECT_ROOT = os.path.abspath(
-        os.path.join(os.path.dirname(os.path.abspath(__file__)), os.pardir)
-    )
-    os.environ["PROJECT_ROOT"] = PROJECT_ROOT

@@ -44,7 +44,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     """
 
     class Meta:
-        app_label = "apis"
+        app_label = "api"
         db_table = "users"
         managed = True
 
@@ -96,7 +96,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 class UserResetPassword(models.Model):
     class Meta:
-        app_label = "apis"
+        app_label = "api"
         db_table = "user_reset_password"
 
     user = models.OneToOneField(User, on_delete=models.CASCADE)

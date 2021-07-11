@@ -1,8 +1,7 @@
-import messages
-from django.contrib.auth.hashers import make_password
+from api import messages
 from rest_framework import status
-from serializers import *
-from validations_utils import ValidationException
+from api.serializers import *
+from api.validations_utils import ValidationException
 
 
 def generate_token(user):
@@ -42,15 +41,6 @@ def create_user(data):
         user_response = {k: v for k, v in user_serializer.data.iteritems() if k in keys}
         user_response["token"] = token.key
         return user_response
-    else:
-        raise ValidationException(user_serializer.errors, status.HTTP_400_BAD_REQUEST)
-
-
-def update_user(data, user):
-    user_serializer = UserProfileSerializer(data=data, instance=user)
-    if user_serializer.is_valid():
-        user_serializer.save()
-        return user_serializer.data
     else:
         raise ValidationException(user_serializer.errors, status.HTTP_400_BAD_REQUEST)
 

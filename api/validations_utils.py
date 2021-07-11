@@ -1,9 +1,9 @@
 import re
 
-import messages
+from api import messages
 from django.core.exceptions import ValidationError
 from django.core.validators import validate_email
-from models import User
+from api.models import User
 from rest_framework import status
 
 
