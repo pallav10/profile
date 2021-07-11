@@ -1,5 +1,5 @@
 """
-WSGI config for profile_app project.
+WSGI config for profile project.
 
 It exposes the WSGI callable as a module-level variable named ``application``.
 
