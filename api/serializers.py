@@ -34,6 +34,7 @@ class UserRegistrationSerializer(serializers.ModelSerializer):
     def validate_email(email):
         if User.objects.filter(email=email).exists():
             raise serializers.ValidationError(detail=USER_ALREADY_EXISTS.get("message"))
+        return email
 
 
 class UserLoginSerializer(serializers.Serializer):
@@ -67,22 +68,12 @@ class UserLoginSerializer(serializers.Serializer):
 
 # serialize data of user for common need of user table.
 class UserProfileSerializer(serializers.ModelSerializer):
-    contact_no = serializers.IntegerField(required=False)
     email = serializers.CharField(required=False)
 
     class Meta:
         model = User
         fields = (
             "email",
-            "id",
-            "created",
-            "country_code",
-            "contact_no",
-            "city",
-            "state",
-            "country",
-            "is_password_changed",
-            "is_superuser",
         )
 
 
