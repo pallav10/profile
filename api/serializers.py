@@ -72,9 +72,7 @@ class UserProfileSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = (
-            "email",
-        )
+        fields = ("email",)
 
 
 class TokenSerializer(serializers.ModelSerializer):
